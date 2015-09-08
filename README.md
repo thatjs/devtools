@@ -1,15 +1,16 @@
 # devtools
-Tools used everyday.
+A collection of gulp and nodejs utilities used everyday.
 
-### Installation:
+#### Installation:
 
   $ git clone https[git]://github.com/thatjs/devtools.git
 
   $ cd devtools<br />
-  $ npm install -g gulp  (sudo for mac)<br />
+  $ npm install -g gulp  (mac: prefix with sudo)<br />
   $ npm install<br />
+  $ npm update
 
-### Prerequisties:
+#### Prerequisties:
 
 Nodejs 0.10.xx
 

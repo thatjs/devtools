@@ -1,0 +1,17 @@
+{
+    "jslint": {
+        "predef": ["com","PIE","ActiveXObject","jasmine","describe","it","spyOn","xdescribe","xit","beforeEach","afterEach","expect"],
+        "browser": true,
+        "maxlen": 480,
+        "todo": true,
+        "unparam": true,
+        "continue": true,
+        "sloppy": true,
+        "nomen": true,
+        "vars": true,
+        "plusplus": true,
+        "regexp": true,
+        "edition": "2012-02-03"
+    }
+
+}
