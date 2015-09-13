@@ -2,13 +2,29 @@
 /**
  * Proxy server to invoke Jenkins jobs from Github webhooks
  *
+ * $ cd /path/thatjs/devtools/appServer
+ * $ node jenkinsMockServer.js -> listens on 8087
+ * $ node jenkinsProxy.js -> listens on 8086
+ *
+ * Test proxy:
+ * $ curl -i -H "Content-Type: application/json" http://localhost:8086/jenkinsProxy -d '{"refs":"refs/heads/branchName"}'
+ *
+ * Test jenkins mock
+ * $ curl -i http://localhost:8087/jobName%20branchName/build
+ *
+ * Notes:
+ * - jobName%20branchName this needs to match the format used for
+ *   jenkin's job urls
+ * - curl -d will send "Content-Type: application/x-www-form-urlencoded", use -H to override
+ *
  */
 var express = require('express'),
     path = require('path'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    debug = require('debug');
+    debug = require('debug'),
+    http = require('http');
 
 // var routes = require('./routes/index');
 
@@ -21,18 +37,51 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // app.use('/', routes);
 
-// ... stopper here, basic /jenkins GET/POST working
-// ... next is to setup another node server to
-// ... fake the jenkins server listening for
-// ... GET localhost:8080/jobName branchName/build
-app.get('/jenkins', function (req, res, next) {
-    console.log('path /');
-    res.end();
-});
-
-app.post('/jenkins', function (req, res) {
+app.post('/jenkinsProxy', function (req, res) {
     console.log(req.body);
-    res.end(JSON.stringify(req.body) + '\r\n');
+
+    // get "refs" value
+    // regex extract branchname
+    // build GET url
+    // make request
+
+
+
+    // console.log('body.refs = ', req.body.refs);
+
+    var job = 'jobName',
+        refs = req.body.refs,
+        branch = refs.substring(refs.lastIndexOf('/') + 1),
+        urlPart = "/" + encodeURIComponent(job + ' ' + branch) + "/build",
+        url = "http://localhost:8087" + urlPart;
+
+    console.log('url = ', url);
+
+    var options = {
+        host: "localhost",
+        port: 8087,
+        path: urlPart
+    };
+
+    var callback = function(response) {
+        console.log(arguments.length);
+        var str = '';
+
+        //another chunk of data has been recieved, so append it to `str`
+        response.on('data', function (chunk) {
+            str += chunk;
+        });
+
+        //the whole response has been recieved, so we just print it out here
+        response.on('end', function () {
+            console.log(str + '\r\n');
+            console.log('jenkins request complete' + '\r\n');
+        });
+    };
+
+    http.request(options, callback).end();
+
+    res.end(JSON.stringify(req.body) + '\r\n'); // working
 });
 
 // catch 404 and forward to error handler
