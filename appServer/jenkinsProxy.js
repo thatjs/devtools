@@ -39,7 +39,7 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     debug = require('debug'),
-    http = require('http')
+    http = require('http'),
 
     port = 8086, // proxy server port
     debug = false, // flag
@@ -110,7 +110,7 @@ module.exports = function (opts) {
                 port: jenkins.port
             },
 
-            callback = function(response) {
+            callback = function (response) {
                 console.log(arguments.length);
                 var str = '';
 
