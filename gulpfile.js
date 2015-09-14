@@ -13,7 +13,7 @@ var startTime = +new Date(),
     debug = require('gulp-debug');
 
 var srcGulp = 'gulpfile.js',
-    srcSvr = 'appServer/jenkinsProxy.js',
+    srcSvr = 'appServer/*.js',
     devSrc = [srcGulp, srcSvr];
 
 var config = require('./config/gulp');
@@ -36,6 +36,25 @@ gulp.task('totalTime', function () {
     var totalTime = new Date(+new Date() - startTime);
     gUtil.log('=== total build time = ' + gUtil.colors.green(totalTime / 1000) + ' sec ===');
     return gUtil.noop(); // return the stream
+});
+
+// gulp public API
+// ===============
+
+gulp.task('jenkinsProxy', function () {
+    var proxy = require('./appServer').jenkinsProxy;
+    proxy({
+        port: 8086,
+        jenkins: {
+            port: 8087,
+            host: 'localhost',
+            jobs: [{
+                repoName: 'jobName',
+                delimiter: ' ',
+                buildBranch: 'branchName'
+            }]
+        }
+    });
 });
 
 // base case and build
