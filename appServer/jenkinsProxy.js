@@ -107,7 +107,11 @@ module.exports = function (opts) {
 
             options = {
                 host: jenkins.host,
-                port: jenkins.port
+                port: jenkins.port,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             },
 
             callback = function (response) {
