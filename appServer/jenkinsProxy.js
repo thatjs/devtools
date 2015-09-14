@@ -132,7 +132,7 @@ module.exports = function (opts) {
 
             if (repoName === job.repoName && branch === job.buildBranch) {
                 // set the request url
-                options.path = "/" + encodeURIComponent(repoName + job.delimiter + branch) + "/build";
+                options.path = "/job/" + encodeURIComponent(repoName + job.delimiter + branch) + "/build";
                 http.request(options, callback).end();
             }
         }
