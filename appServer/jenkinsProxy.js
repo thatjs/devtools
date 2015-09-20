@@ -7,30 +7,54 @@
  * $ node jenkinsProxy.js -> listens on 8086
  *
  * Test proxy:
- * $ curl -i -H "Content-Type: application/json" http://localhost:8086/jenkinsProxy -d '{"refs":"refs/heads/branchName","repository":{"name": "jobName"}}'
+ * $ curl -i -H "Content-Type: application/json" http://localhost:8086/jenkinsProxy -d '{"refs":"refs/heads/branchName","repository":{"name": "repoName"}}'
  *
  * Test jenkins mock
- * $ curl -i http://localhost:8087/job/jobName%20branchName/build
+ * $ curl -i http://localhost:8087/job/repoName%20branchName/build
  *
  * Notes:
- * - jobName%20branchName this needs to match the format used for
- *   jenkin's job urls
+ * - repoName%20branchName this needs to match the format used for
+ *   jenkin's job urls, use delimiter for extra information
+ *     ex. repoName_release_branchName  - delimiter = '_release_'
+ *         repoName tmp branchName      - delimiter = ' tmp '
  * - curl -d will send "Content-Type: application/x-www-form-urlencoded", use -H to override
  *
  * Usage:
  *   var jenkinsProxy = require('./appServer').jenkinsProxy;
+ *
+ *   // use configuration file for jenkins configuration and jobs
  *   jenkinsProxy({
  *      port: 8086,
- *      jenkins: {
- *         port: 8087,
- *         host: 'localhost',
- *         jobs: [{
- *           repoName: 'jobName',
- *           delimiter: ' ',
- *           buildBranch: 'branchName'
- *         }]
- *      }
+ *      debug: true  // default is false
  *   });
+ *
+ *   // override jenkins configuration and jobs
+ *   jenkinsProxy({
+ *      port: 8086,
+ *      debug: true  // default is false
+ *      jenkins: {
+ *           port: 8087,
+ *           host: 'localhost',
+ *           jobs: [{
+ *               repoName: 'repoName',
+ *               delimiter: ' ',
+ *               buildBranch: 'branchName'
+ *           }]
+ *       }
+ *   });
+ *
+ * Configuration File: config/jenkins.json
+ *
+ * {
+ *   "port": 8087,                       // port for the jenkins instance
+ *   "host": "localhost",                // domain name for jenkins instance
+ *   "jobs": [{                          // array of jobs to build from webhook
+ *       "repoName": "repoName",
+ *       "delimiter": " ",
+ *       "buildBranch": "branchName"
+ *   }]
+ *
+ * }
  *
  */
 var express = require('express'),
@@ -40,18 +64,10 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     debug = require('debug'),
     http = require('http'),
+    jenkins = require('../config/jenkins'),
 
     port = 8086, // proxy server port
-    debug = false, // flag
-    jenkins = {
-        port: 8087,
-        host: 'localhost',
-        jobs: [{
-            repoName: 'jobName',
-            delimiter: ' ',
-            buildBranch: 'branchName'
-        }]
-    };
+    debug = false; // flag
 
 module.exports = function (opts) {
 
@@ -83,11 +99,12 @@ module.exports = function (opts) {
                 jenkins.host = opts.jenkins.host;
             }
 
-            if (opts.jenkins.jobs && typeof opts.jenkins.jobs === 'array' && opts.jenkins.jobs.length >= 1) {
+            if (opts.jenkins.jobs && typeof opts.jenkins.jobs === 'object' && opts.jenkins.jobs.length >= 1) {
                 jenkins.jobs = opts.jenkins.jobs;
             }
 
         }
+
     }
 
     app.post('/jenkinsProxy', function (req, res) {
@@ -95,7 +112,10 @@ module.exports = function (opts) {
         // console.log(req.body);
 
         // github webhook push branch information in payload
-        // "refs": "refs/head/branchName"
+        // "refs": "refs/head/branchName",
+        // "repository": {
+        //   "name": "repoName"
+        // }
 
         var job,
             repoName = req.body.repository.name,

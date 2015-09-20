@@ -1,7 +1,8 @@
 /*globals require, process, module, console */
 /**
- * Mock jenkins server to confirm correct job POST request
- * url: http://localhost:8087/job/jobName branchName/build
+ * Mock jenkins server to confirm correct job request
+ * method: POST
+ * url: http://localhost:8087/job/repoName branchName/build
  *
  */
 var express = require('express'),
@@ -15,7 +16,7 @@ var app = express();
 app.use(logger('combined'));
 
 // leave the hardcoded job path for testing, a match will log it
-app.post('/job/jobName%20branchName/build', function (req, res, next) {
+app.post('/job/repoName%20branchName/build', function (req, res, next) {
     console.log('req.route.path = ', req.route.path);
     res.end();
 });

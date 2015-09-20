@@ -1,8 +1,0 @@
-{
-    "jobs": [{
-        "repoName": "ppm-ux",
-        "delimiter": " ",
-        "buildBranch": "dev"
-    }]
-
-}

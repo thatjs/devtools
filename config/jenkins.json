@@ -1,0 +1,10 @@
+{
+    "port": 8087,
+    "host": "localhost",
+    "jobs": [{
+        "repoName": "repoName",
+        "delimiter": " ",
+        "buildBranch": "branchName"
+    }]
+
+}

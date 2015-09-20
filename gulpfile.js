@@ -41,7 +41,16 @@ gulp.task('totalTime', function () {
 // gulp public API
 // ===============
 
+// use config/jenkins.json
 gulp.task('jenkinsProxy', function () {
+    var proxy = require('./appServer').jenkinsProxy;
+    proxy({
+        port: 8086
+    });
+});
+
+// override config/jenkins.json
+gulp.task('jenkinsProxy2', function () {
     var proxy = require('./appServer').jenkinsProxy;
     proxy({
         port: 8086,
