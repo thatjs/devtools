@@ -4,3 +4,4 @@ target/
 node_modules/
 logs/
 npm-debug.log
+config/jenkins.json
