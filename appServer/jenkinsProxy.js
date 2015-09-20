@@ -7,7 +7,7 @@
  * $ node jenkinsProxy.js -> listens on 8086
  *
  * Test proxy:
- * $ curl -i -H "Content-Type: application/json" http://localhost:8086/jenkinsProxy -d '{"refs":"refs/heads/branchName","repository":{"name": "repoName"}}'
+ * $ curl -i -H "Content-Type: application/json" http://localhost:8086/jenkinsProxy -d '{"ref":"refs/heads/branchName","repository":{"name": "jobName"}}'
  *
  * Test jenkins mock
  * $ curl -i http://localhost:8087/job/repoName%20branchName/build
@@ -112,7 +112,7 @@ module.exports = function (opts) {
         // console.log(req.body);
 
         // github webhook push branch information in payload
-        // "refs": "refs/head/branchName",
+        // "ref": "refs/head/branchName"
         // "repository": {
         //   "name": "repoName"
         // }
@@ -122,8 +122,8 @@ module.exports = function (opts) {
             len = jenkins.jobs.length,
             i;
 
-        var refs = req.body.refs,
-            branch = refs.substring(refs.lastIndexOf('/') + 1),
+        var ref = req.body.ref,
+            branch = ref.substring(ref.lastIndexOf('/') + 1),
 
             options = {
                 host: jenkins.host,
