@@ -10,7 +10,7 @@
  * $ curl -i -H "Content-Type: application/json" http://localhost:8086/jenkinsProxy -d '{"refs":"refs/heads/branchName","repository":{"name": "jobName"}}'
  *
  * Test jenkins mock
- * $ curl -i http://localhost:8087/jobName%20branchName/build
+ * $ curl -i http://localhost:8087/job/jobName%20branchName/build
  *
  * Notes:
  * - jobName%20branchName this needs to match the format used for
@@ -129,7 +129,7 @@ module.exports = function (opts) {
                 });
             };
 
-        // only make build request if repository and branch matches configurated jobs
+        // only make build request if repository and branch matches configured jobs
         for (i = 0; i < len; i++) {
 
             job = jenkins.jobs[i];
