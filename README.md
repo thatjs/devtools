@@ -10,6 +10,13 @@ A collection of gulp and nodejs utilities used everyday.
   $ npm install<br />
   $ npm update
 
+  $ cd appServer
+  $ npm install
+
+#### Servers
+
+  $ gulp jenkinsProxy
+
 #### Prerequisties:
 
 Nodejs 0.10.xx
